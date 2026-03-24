@@ -31,7 +31,7 @@ npm run dev
 
 ## Изменения в сервере
 
-Да, в сервер были внесены 2 минимальные правки, без которых фронтенд не мог корректно работать с текущим API:
+В сервер были внесены 2 минимальные правки, без которых фронтенд не мог корректно работать с текущим API:
 
 1. `GET /items` теперь возвращает `id` у элементов списка.
    Причина: без `id` невозможно корректно перейти со списка на страницу объявления `/ads/:id`.
@@ -43,9 +43,9 @@ npm run dev
 
 ## CORS setup (Fastify)
 
-For local frontend/backend work, CORS is enabled in `server/server.ts` via `@fastify/cors`.
-This was added as a workaround for an initial server-side CORS misconfiguration.
-The plugin is registered before route declarations:
+Для локальной совместной работы фронтенда и бэкенда CORS включен в server/server.ts через @fastify/cors.
+Это добавлено как временный обход из-за изначально некорректной CORS-конфигурации на стороне сервера в исходных файлах.
+Плагин регистрируется до объявления роутов.:
 
 ```ts
 await fastify.register(cors, {
