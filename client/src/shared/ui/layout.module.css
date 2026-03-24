@@ -1,4 +1,4 @@
-.pageGrid {
+﻿.pageGrid {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
   gap: 24px;
@@ -10,8 +10,8 @@
 }
 
 .panelCard {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border-alpha);
+  box-shadow: var(--shadow-card);
 }
 
 .adsGrid {

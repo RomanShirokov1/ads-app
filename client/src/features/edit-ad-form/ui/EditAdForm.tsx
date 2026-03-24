@@ -281,7 +281,7 @@ export const EditAdForm = ({ ad }: Props) => {
             name="category"
             rules={[{ required: true, message: 'Выберите категорию' }]}
           >
-            <Select options={categoryOptions} />
+            <Select popupClassName={styles.selectPopup} options={categoryOptions} />
           </Form.Item>
         </section>
 
@@ -334,7 +334,7 @@ export const EditAdForm = ({ ad }: Props) => {
                       >
                         {'Применить'}
                       </Button>
-                      <Button size="small" onClick={() => setPriceAi(state => ({ ...state, open: false }))}>
+                      <Button className={styles.secondaryButton} size="small" onClick={() => setPriceAi(state => ({ ...state, open: false }))}>
                         {'Закрыть'}
                       </Button>
                     </Space>
@@ -345,7 +345,7 @@ export const EditAdForm = ({ ad }: Props) => {
                     <Typography.Paragraph className={styles.aiParagraph}>
                       {priceAi.error ?? 'Попробуйте повторить запрос или закрыть уведомление.'}
                     </Typography.Paragraph>
-                    <Button size="small" onClick={() => setPriceAi(state => ({ ...state, open: false }))}>
+                    <Button className={styles.secondaryButton} size="small" onClick={() => setPriceAi(state => ({ ...state, open: false }))}>
                       {'Закрыть'}
                     </Button>
                   </div>
@@ -379,7 +379,7 @@ export const EditAdForm = ({ ad }: Props) => {
               name={['params', field.name]}
             >
               {field.type === 'select' ? (
-                <Select allowClear options={field.options} />
+                <Select popupClassName={styles.selectPopup} allowClear options={field.options} />
               ) : field.type === 'number' ? (
                 <InputNumber min={field.min} style={{ width: '100%' }} />
               ) : (
@@ -430,7 +430,7 @@ export const EditAdForm = ({ ad }: Props) => {
                     >
                       {'Применить'}
                     </Button>
-                    <Button size="small" onClick={() => setDescriptionAi(state => ({ ...state, open: false }))}>
+                    <Button className={styles.secondaryButton} size="small" onClick={() => setDescriptionAi(state => ({ ...state, open: false }))}>
                       {'Закрыть'}
                     </Button>
                   </Space>
@@ -441,7 +441,7 @@ export const EditAdForm = ({ ad }: Props) => {
                   <Typography.Paragraph className={styles.aiParagraph}>
                     {descriptionAi.error ?? 'Попробуйте повторить запрос или закрыть уведомление.'}
                   </Typography.Paragraph>
-                  <Button size="small" onClick={() => setDescriptionAi(state => ({ ...state, open: false }))}>
+                  <Button className={styles.secondaryButton} size="small" onClick={() => setDescriptionAi(state => ({ ...state, open: false }))}>
                     {'Закрыть'}
                   </Button>
                 </div>

@@ -23,7 +23,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: #000000d9;
+  color: var(--color-text-title);
 }
 
 .group {
@@ -39,7 +39,7 @@
   gap: 12px;
   font-size: 14px;
   font-weight: 400;
-  color: #000000d9;
+  color: var(--color-text-title);
 }
 
 .options {
@@ -48,7 +48,7 @@
 }
 
 .options :global(.ant-checkbox-wrapper) {
-  color: #000000d9;
+  color: var(--color-text-title);
   font-size: 14px;
 }
 
@@ -58,7 +58,7 @@
 
 .separator {
   margin: 0;
-  border-color: #f0f0f0;
+  border-color: var(--color-border-default);
 }
 
 .switchRow {
@@ -73,15 +73,15 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1.35;
-  color: #2b2b2b;
+  color: var(--color-text-secondary);
 }
 
 .resetButton {
   height: 41px;
   font-size: 14px;
   border-radius: 8px;
-  background-color: #fff;
-  color: #8c8c8c;
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-soft);
   border: none;
   box-shadow: none;
 }

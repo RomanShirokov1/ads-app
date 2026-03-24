@@ -1,6 +1,35 @@
 ﻿.shell {
+  position: relative;
   min-height: 100vh;
-  background: #f7f5f8;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.shellSurface {
+  background: var(--surface-bg);
+}
+
+.themeToggle {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+  margin-left: auto;
+  margin-right: 24px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--theme-toggle-border);
+  background: var(--theme-toggle-bg);
+  backdrop-filter: blur(6px);
+}
+
+.themeLabel {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--app-text-muted);
 }
 
 .content {
@@ -8,11 +37,16 @@
 }
 
 .contentWhite {
-  background: #ffffff;
+  background: var(--surface-bg);
 }
 
 @media (max-width: 992px) {
+  .themeToggle {
+    margin-right: 16px;
+  }
+
   .content {
     padding: 16px;
   }
 }
+

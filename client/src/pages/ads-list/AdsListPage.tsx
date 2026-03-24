@@ -190,6 +190,7 @@ export const AdsListPage = () => {
 
           <Select
             className={styles.sort}
+            popupClassName={styles.sortPopup}
             value={selectedSort}
             options={[...sortOptions]}
             onChange={value => {
@@ -256,3 +257,4 @@ export const AdsListPage = () => {
     </div>
   );
 };
+

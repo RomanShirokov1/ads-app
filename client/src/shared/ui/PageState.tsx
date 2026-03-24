@@ -1,4 +1,4 @@
-import { Button, Empty, Result, Space, Spin } from 'antd';
+﻿import { Button, Empty, Result, Space, Spin } from 'antd';
 import type { ReactNode } from 'react';
 
 type RetryProps = {
@@ -7,9 +7,14 @@ type RetryProps = {
 
 export const LoadingState = ({ tip }: { tip?: string }) => (
   <Result
-    icon={<Spin size="large" />}
-    title="Загрузка"
-    subTitle={tip ?? 'Подготавливаем данные страницы'}
+    className="pageStateResult"
+    icon={<Spin size="large" style={{ color: 'var(--color-primary)' }} />}
+    title={<span style={{ color: 'var(--color-text-title)' }}>Загрузка</span>}
+    subTitle={
+      <span style={{ color: 'var(--color-text-muted)' }}>
+        {tip ?? 'Подготавливаем данные страницы'}
+      </span>
+    }
   />
 );
 
@@ -22,9 +27,10 @@ export const ErrorState = ({
   description: string;
 } & RetryProps) => (
   <Result
+    className="pageStateResult"
     status="error"
-    title={title}
-    subTitle={description}
+    title={<span style={{ color: 'var(--color-text-title)' }}>{title}</span>}
+    subTitle={<span style={{ color: 'var(--color-text-muted)' }}>{description}</span>}
     extra={onRetry ? <Button onClick={onRetry}>Повторить</Button> : undefined}
   />
 );
