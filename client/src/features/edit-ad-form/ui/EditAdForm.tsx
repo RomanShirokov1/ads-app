@@ -1,5 +1,17 @@
 import { BulbOutlined, DollarOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Card, Form, Input, InputNumber, Popover, Select, Space, Typography, message } from 'antd';
+import {
+  Alert,
+  Button,
+  Card,
+  Form,
+  Input,
+  InputNumber,
+  Popover,
+  Select,
+  Space,
+  Typography,
+  message,
+} from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adsApi } from '@/entities/ad/api/adApi';
@@ -15,6 +27,7 @@ import {
 import { useEditedAdsStore } from '@/features/edit-ad-form/lib/useEditedAdsStore';
 import { useUnsavedChangesPrompt } from '@/shared/hooks/useUnsavedChangesPrompt';
 import { env } from '@/shared/config/env';
+
 import styles from './EditAdForm.module.css';
 
 type Props = {
@@ -51,18 +64,19 @@ const initialAiState = <T,>(): AiRequestState<T> => ({
 export const EditAdForm = ({ ad }: Props) => {
   const [form] = Form.useForm<EditAdFormValues>();
   const navigate = useNavigate();
-  const markAdAsEdited = useEditedAdsStore(state => state.markAdAsEdited);
+  const markAdAsEdited = useEditedAdsStore((state) => state.markAdAsEdited);
 
   const initialValues = useMemo(() => mapAdToFormValues(ad), [ad]);
-  const [draftAvailable, setDraftAvailable] = useState<EditAdFormValues | null>(
-    () => draftStorage.get(ad.id),
-  );
+  const [initialDraftSnapshot] = useState<EditAdFormValues | null>(() => draftStorage.get(ad.id));
+  const [showDraftAlert, setShowDraftAlert] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [descriptionAi, setDescriptionAi] = useState<AiRequestState<DescriptionSuggestion>>(initialAiState);
+  const [descriptionAi, setDescriptionAi] =
+    useState<AiRequestState<DescriptionSuggestion>>(initialAiState);
   const [priceAi, setPriceAi] = useState<AiRequestState<PriceSuggestion>>(initialAiState);
 
   const bootstrappedRef = useRef(false);
+  const draftVisibilityResolvedRef = useRef(false);
   const category = Form.useWatch('category', form) ?? ad.category;
   const allValues = Form.useWatch([], form);
   const titleValue = Form.useWatch('title', form);
@@ -83,6 +97,18 @@ export const EditAdForm = ({ ad }: Props) => {
   }, [form, initialValues]);
 
   useEffect(() => {
+    if (draftVisibilityResolvedRef.current) {
+      return;
+    }
+
+    draftVisibilityResolvedRef.current = true;
+    setShowDraftAlert(
+      Boolean(initialDraftSnapshot) &&
+        !draftEquals(initialDraftSnapshot as EditAdFormValues, initialValues),
+    );
+  }, [initialDraftSnapshot, initialValues]);
+
+  useEffect(() => {
     if (!bootstrappedRef.current || !allValues) {
       return;
     }
@@ -96,39 +122,39 @@ export const EditAdForm = ({ ad }: Props) => {
 
     setIsDirty(nextIsDirty);
 
-    const timeoutId = window.setTimeout(() => {
-      if (nextIsDirty) {
-        draftStorage.set(ad.id, normalizedValues);
-        setDraftAvailable(draftStorage.get(ad.id));
-        return;
-      }
-
-      draftStorage.clear(ad.id);
-      setDraftAvailable(null);
-    }, 300);
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [ad.category, ad.id, allValues, initialValues]);
-
-  const handleRestoreDraft = () => {
-    if (!draftAvailable) {
+    if (nextIsDirty) {
+      draftStorage.set(ad.id, normalizedValues);
       return;
     }
 
-    form.setFieldsValue(draftAvailable);
+    draftStorage.clear(ad.id);
+  }, [ad.category, ad.id, allValues, initialValues]);
+
+  const handleRestoreDraft = () => {
+    if (!initialDraftSnapshot) {
+      return;
+    }
+
+    form.setFieldsValue(initialDraftSnapshot);
+    setShowDraftAlert(false);
     message.success('Черновик восстановлен');
   };
 
   const handleDiscardDraft = () => {
     draftStorage.clear(ad.id);
-    setDraftAvailable(null);
+
     form.setFieldsValue(initialValues);
+    setShowDraftAlert(false);
     message.info('Черновик удалён');
   };
 
   const handleCancel = () => {
-    if (isDirty && !window.confirm('Есть несохранённые изменения. Выйти без сохранения?')) {
+    if (
+      isDirty &&
+      !window.confirm(
+        'Есть несохранённые изменения. Выйти без сохранения?',
+      )
+    ) {
       return;
     }
 
@@ -145,7 +171,7 @@ export const EditAdForm = ({ ad }: Props) => {
   };
 
   const handleGenerateDescription = async () => {
-    setDescriptionAi(state => ({
+    setDescriptionAi((state) => ({
       ...state,
       status: 'loading',
       open: false,
@@ -167,13 +193,16 @@ export const EditAdForm = ({ ad }: Props) => {
         status: 'error',
         open: true,
         data: null,
-        error: error instanceof Error ? error.message : 'Произошла ошибка при запросе к AI',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Произошла ошибка при запросе к AI',
       });
     }
   };
 
   const handleEstimatePrice = async () => {
-    setPriceAi(state => ({
+    setPriceAi((state) => ({
       ...state,
       status: 'loading',
       open: false,
@@ -195,7 +224,10 @@ export const EditAdForm = ({ ad }: Props) => {
         status: 'error',
         open: true,
         data: null,
-        error: error instanceof Error ? error.message : 'Произошла ошибка при запросе к AI',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Произошла ошибка при запросе к AI',
       });
     }
   };
@@ -207,11 +239,16 @@ export const EditAdForm = ({ ad }: Props) => {
       await adsApi.updateAd(ad.id, mapFormValuesToUpdatePayload(values));
       draftStorage.clear(ad.id);
       setIsDirty(false);
+      setShowDraftAlert(false);
       markAdAsEdited(ad.id);
       message.success('Изменения сохранены');
       navigate(`/ads/${ad.id}`);
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Не удалось сохранить объявление');
+      message.error(
+        error instanceof Error
+          ? error.message
+          : 'Не удалось сохранить объявление',
+      );
     } finally {
       setSubmitting(false);
     }
@@ -233,19 +270,6 @@ export const EditAdForm = ({ ad }: Props) => {
           : 'Придумать описание'
         : 'Повторить запрос';
 
-  const normalizedCurrentValues = allValues
-    ? ({
-        ...allValues,
-        category: allValues.category ?? ad.category,
-        params: allValues.params ?? {},
-      } as EditAdFormValues)
-    : null;
-
-  const showDraftAlert =
-    Boolean(draftAvailable) &&
-    !draftEquals(draftAvailable as EditAdFormValues, initialValues) &&
-    (!normalizedCurrentValues || !draftEquals(draftAvailable as EditAdFormValues, normalizedCurrentValues));
-
   return (
     <Card className={styles.card} title={'Редактирование объявления'}>
       {showDraftAlert ? (
@@ -254,13 +278,15 @@ export const EditAdForm = ({ ad }: Props) => {
           type="warning"
           showIcon
           message={'Найден черновик'}
-          description={'Можно восстановить локально сохранённые изменения или сбросить их.'}
+          description={
+            'Можно восстановить локально сохранённые изменения или сбросить их.'
+          }
           action={
             <Space wrap>
-              <Button size="small" onClick={handleRestoreDraft}>
+              <Button className={styles.secondaryButton} size="small" onClick={handleRestoreDraft}>
                 {'Восстановить'}
               </Button>
-              <Button size="small" onClick={handleDiscardDraft}>
+              <Button className={styles.secondaryButton} size="small" onClick={handleDiscardDraft}>
                 {'Сбросить'}
               </Button>
             </Space>
@@ -268,19 +294,13 @@ export const EditAdForm = ({ ad }: Props) => {
         />
       ) : null}
 
-      <Form<EditAdFormValues>
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        requiredMark
-      >
+      <Form<EditAdFormValues> form={form} layout="vertical" onFinish={handleSubmit} requiredMark>
         <section className={styles.section}>
           <Form.Item
             className={styles.fieldCompact}
             label={'Категория'}
             name="category"
-            rules={[{ required: true, message: 'Выберите категорию' }]}
-          >
+            rules={[{ required: true, message: 'Выберите категорию' }]}>
             <Select popupClassName={styles.selectPopup} options={categoryOptions} />
           </Form.Item>
         </section>
@@ -291,10 +311,15 @@ export const EditAdForm = ({ ad }: Props) => {
             label={'Название'}
             name="title"
             rules={[
-              { required: true, message: 'Название должно быть заполнено' },
-              { whitespace: true, message: 'Название должно быть заполнено' },
-            ]}
-          >
+              {
+                required: true,
+                message: 'Название должно быть заполнено',
+              },
+              {
+                whitespace: true,
+                message: 'Название должно быть заполнено',
+              },
+            ]}>
             <Input allowClear placeholder={'Например, MacBook Pro 16"'} />
           </Form.Item>
 
@@ -303,8 +328,7 @@ export const EditAdForm = ({ ad }: Props) => {
               className={styles.fieldCompact}
               label={'Цена'}
               name="price"
-              rules={[{ required: true, message: 'Укажите цену' }]}
-            >
+              rules={[{ required: true, message: 'Укажите цену' }]}>
               <InputNumber min={0} precision={0} style={{ width: '100%' }} />
             </Form.Item>
 
@@ -312,13 +336,14 @@ export const EditAdForm = ({ ad }: Props) => {
               trigger="click"
               open={priceAi.open}
               placement="topLeft"
-              onOpenChange={open => setPriceAi(state => ({ ...state, open }))}
+              onOpenChange={(open) => setPriceAi((state) => ({ ...state, open }))}
               content={
                 priceAi.status === 'success' && priceAi.data ? (
                   <div className={styles.aiPopoverContent}>
                     <Typography.Text strong>{'Ответ AI:'}</Typography.Text>
                     <Typography.Paragraph className={styles.aiParagraph}>
-                      {'Рекомендованная цена:'} {new Intl.NumberFormat('ru-RU').format(priceAi.data.price)} {'₽'}
+                      {'Рекомендованная цена:'}{' '}
+                      {new Intl.NumberFormat('ru-RU').format(priceAi.data.price)} {'₽'}
                     </Typography.Paragraph>
                     <Typography.Paragraph className={styles.aiParagraph}>
                       {priceAi.data.rationale}
@@ -329,37 +354,43 @@ export const EditAdForm = ({ ad }: Props) => {
                         size="small"
                         onClick={() => {
                           form.setFieldValue('price', priceAi.data?.price);
-                          setPriceAi(state => ({ ...state, open: false }));
-                        }}
-                      >
+                          setPriceAi((state) => ({ ...state, open: false }));
+                        }}>
                         {'Применить'}
                       </Button>
-                      <Button className={styles.secondaryButton} size="small" onClick={() => setPriceAi(state => ({ ...state, open: false }))}>
+                      <Button
+                        className={styles.secondaryButton}
+                        size="small"
+                        onClick={() => setPriceAi((state) => ({ ...state, open: false }))}>
                         {'Закрыть'}
                       </Button>
                     </Space>
                   </div>
                 ) : (
                   <div className={styles.aiPopoverContent}>
-                    <Typography.Text className={styles.aiErrorTitle}>{'Произошла ошибка при запросе к AI'}</Typography.Text>
+                    <Typography.Text className={styles.aiErrorTitle}>
+                      {'Произошла ошибка при запросе к AI'}
+                    </Typography.Text>
                     <Typography.Paragraph className={styles.aiParagraph}>
-                      {priceAi.error ?? 'Попробуйте повторить запрос или закрыть уведомление.'}
+                      {priceAi.error ??
+                        'Попробуйте повторить запрос или закрыть уведомление.'}
                     </Typography.Paragraph>
-                    <Button className={styles.secondaryButton} size="small" onClick={() => setPriceAi(state => ({ ...state, open: false }))}>
+                    <Button
+                      className={styles.secondaryButton}
+                      size="small"
+                      onClick={() => setPriceAi((state) => ({ ...state, open: false }))}>
                       {'Закрыть'}
                     </Button>
                   </div>
                 )
-              }
-            >
+              }>
               <Button
                 className={styles.aiButton}
                 icon={priceAi.status === 'loading' ? <ReloadOutlined spin /> : <DollarOutlined />}
                 loading={priceAi.status === 'loading'}
                 disabled={!isAiConfigured || priceAi.status === 'loading'}
                 title={!isAiConfigured ? aiDisabledHint : undefined}
-                onClick={handleEstimatePrice}
-              >
+                onClick={handleEstimatePrice}>
                 {priceButtonLabel}
               </Button>
             </Popover>
@@ -371,13 +402,12 @@ export const EditAdForm = ({ ad }: Props) => {
             {'Характеристики'}
           </Typography.Title>
 
-          {paramFieldConfig[category].map(field => (
+          {paramFieldConfig[category].map((field) => (
             <Form.Item
               className={styles.fieldCompact}
               key={field.name}
               label={field.label}
-              name={['params', field.name]}
-            >
+              name={['params', field.name]}>
               {field.type === 'select' ? (
                 <Select popupClassName={styles.selectPopup} allowClear options={field.options} />
               ) : field.type === 'number' ? (
@@ -390,12 +420,17 @@ export const EditAdForm = ({ ad }: Props) => {
         </section>
 
         <section className={styles.section}>
-          <Form.Item className={styles.descriptionField} label={'Описание'} name="description">
+          <Form.Item
+            className={styles.descriptionField}
+            label={'Описание'}
+            name="description">
             <Input.TextArea
               rows={4}
               maxLength={1000}
               showCount
-              placeholder={'Расскажите о товаре, состоянии и условиях сделки'}
+              placeholder={
+                'Расскажите о товаре, состоянии и условиях сделки'
+              }
             />
           </Form.Item>
 
@@ -403,7 +438,7 @@ export const EditAdForm = ({ ad }: Props) => {
             trigger="click"
             open={descriptionAi.open}
             placement="topLeft"
-            onOpenChange={open => setDescriptionAi(state => ({ ...state, open }))}
+            onOpenChange={(open) => setDescriptionAi((state) => ({ ...state, open }))}
             content={
               descriptionAi.status === 'success' && descriptionAi.data ? (
                 <div className={styles.aiPopoverContent}>
@@ -411,7 +446,7 @@ export const EditAdForm = ({ ad }: Props) => {
                   <Typography.Paragraph className={styles.aiParagraph}>
                     {descriptionAi.data.description}
                   </Typography.Paragraph>
-                  {descriptionAi.data.suggestions.map(suggestion => (
+                  {descriptionAi.data.suggestions.map((suggestion) => (
                     <Typography.Paragraph key={suggestion} className={styles.aiParagraphMuted}>
                       {'•'} {suggestion}
                     </Typography.Paragraph>
@@ -425,37 +460,43 @@ export const EditAdForm = ({ ad }: Props) => {
                           form.setFieldValue('description', descriptionAi.data.description);
                         }
 
-                        setDescriptionAi(state => ({ ...state, open: false }));
-                      }}
-                    >
+                        setDescriptionAi((state) => ({ ...state, open: false }));
+                      }}>
                       {'Применить'}
                     </Button>
-                    <Button className={styles.secondaryButton} size="small" onClick={() => setDescriptionAi(state => ({ ...state, open: false }))}>
+                    <Button
+                      className={styles.secondaryButton}
+                      size="small"
+                      onClick={() => setDescriptionAi((state) => ({ ...state, open: false }))}>
                       {'Закрыть'}
                     </Button>
                   </Space>
                 </div>
               ) : (
                 <div className={styles.aiPopoverContent}>
-                  <Typography.Text className={styles.aiErrorTitle}>{'Произошла ошибка при запросе к AI'}</Typography.Text>
+                  <Typography.Text className={styles.aiErrorTitle}>
+                    {'Произошла ошибка при запросе к AI'}
+                  </Typography.Text>
                   <Typography.Paragraph className={styles.aiParagraph}>
-                    {descriptionAi.error ?? 'Попробуйте повторить запрос или закрыть уведомление.'}
+                    {descriptionAi.error ??
+                      'Попробуйте повторить запрос или закрыть уведомление.'}
                   </Typography.Paragraph>
-                  <Button className={styles.secondaryButton} size="small" onClick={() => setDescriptionAi(state => ({ ...state, open: false }))}>
+                  <Button
+                    className={styles.secondaryButton}
+                    size="small"
+                    onClick={() => setDescriptionAi((state) => ({ ...state, open: false }))}>
                     {'Закрыть'}
                   </Button>
                 </div>
               )
-            }
-          >
+            }>
             <Button
               className={styles.aiButton}
               icon={descriptionAi.status === 'loading' ? <ReloadOutlined spin /> : <BulbOutlined />}
               loading={descriptionAi.status === 'loading'}
               disabled={!isAiConfigured || descriptionAi.status === 'loading'}
               title={!isAiConfigured ? aiDisabledHint : undefined}
-              onClick={handleGenerateDescription}
-            >
+              onClick={handleGenerateDescription}>
               {descriptionButtonLabel}
             </Button>
           </Popover>
@@ -466,8 +507,7 @@ export const EditAdForm = ({ ad }: Props) => {
             type="primary"
             htmlType="submit"
             loading={submitting}
-            disabled={!canSubmit || submitting}
-          >
+            disabled={!canSubmit || submitting}>
             {'Сохранить'}
           </Button>
           <Button onClick={handleCancel}>{'Отменить'}</Button>

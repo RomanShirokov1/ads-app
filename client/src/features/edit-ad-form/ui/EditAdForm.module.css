@@ -1,4 +1,4 @@
-﻿.card {
+.card {
   border-radius: 0;
   border: none;
   box-shadow: none;
@@ -41,14 +41,42 @@
   margin-bottom: 16px;
 }
 
-.draftAlert :global(.ant-alert) {
+.draftAlert:global(.ant-alert) {
   background: var(--color-bg-warning);
   border-color: var(--color-warning-accent);
+  --ant-color-text-heading: var(--color-text-title);
 }
 
 .draftAlert :global(.ant-alert-message),
 .draftAlert :global(.ant-alert-description) {
   color: var(--color-text-secondary);
+}
+
+.draftAlert :global(.ant-alert-title) {
+  color: var(--color-text-title) !important;
+}
+
+.draftAlert :global(.ant-alert-icon) {
+  color: var(--color-warning-strong) !important;
+}
+
+.draftAlert :global(.ant-alert-action) {
+  display: flex;
+  gap: 8px;
+}
+
+.draftAlert :global(.ant-alert-action .ant-btn) {
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border-strong) !important;
+  background: var(--color-bg-surface) !important;
+}
+
+.draftAlert :global(.ant-alert-action .ant-btn:hover),
+.draftAlert :global(.ant-alert-action .ant-btn:focus),
+.draftAlert :global(.ant-alert-action .ant-btn:active) {
+  color: var(--color-text-title) !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-bg-soft) !important;
 }
 
 .sectionTitle {
@@ -428,3 +456,8 @@
   background: var(--color-bg-soft) !important;
 }
 
+
+.draftAlert :global(.ant-alert-message) {
+  color: var(--color-text-title) !important;
+  font-weight: 600;
+}
