@@ -1,0 +1,27 @@
+.pageGrid {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.pageGridSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.panelCard {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+}
+
+.adsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 992px) {
+  .pageGrid {
+    grid-template-columns: 1fr;
+  }
+}

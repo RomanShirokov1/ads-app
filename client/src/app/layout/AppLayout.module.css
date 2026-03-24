@@ -1,0 +1,18 @@
+﻿.shell {
+  min-height: 100vh;
+  background: #f7f5f8;
+}
+
+.content {
+  padding: 24px;
+}
+
+.contentWhite {
+  background: #ffffff;
+}
+
+@media (max-width: 992px) {
+  .content {
+    padding: 16px;
+  }
+}

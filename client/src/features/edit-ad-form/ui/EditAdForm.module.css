@@ -1,0 +1,198 @@
+.card {
+  border-radius: none;
+  border: none;
+  box-shadow: none;
+}
+
+.card :global(.ant-card-head) {
+  border-bottom: none;
+  min-height: auto;
+  padding: 20px 24px 0;
+}
+
+.card :global(.ant-card-head-title) {
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.88);
+  padding: 0;
+}
+
+.card :global(.ant-card-body) {
+  padding: 8px 24px 24px;
+}
+
+.section {
+  border-top: 1px solid #e5e5e5;
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.section:first-of-type {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 4px;
+}
+
+.draftAlert {
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  margin-bottom: 12px !important;
+  font-size: 32px !important;
+  font-weight: 500 !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+}
+
+.fieldCompact {
+  width: min(100%, 580px);
+  margin-bottom: 12px;
+}
+
+.fieldCompact :global(.ant-form-item-label > label) {
+  font-size: 26px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.fieldCompact :global(.ant-form-item-label > label.ant-form-item-required)::before {
+  margin-inline-end: 3px;
+}
+
+.fieldCompact :global(.ant-input),
+.fieldCompact :global(.ant-input-affix-wrapper),
+.fieldCompact :global(.ant-input-number),
+.fieldCompact :global(.ant-select-selector) {
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.fieldCompact :global(.ant-input-affix-wrapper) {
+  padding: 0 11px !important;
+}
+
+.fieldCompact :global(.ant-input-affix-wrapper > input.ant-input) {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 !important;
+}
+
+.fieldCompact :global(.ant-input-number .ant-input-number-input-wrap) {
+  height: 30px !important;
+}
+
+.fieldCompact :global(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+  padding: 0 11px !important;
+}
+
+.fieldCompact :global(.ant-select-selection-item),
+.fieldCompact :global(.ant-select-selection-placeholder) {
+  line-height: 30px !important;
+}
+
+.fieldCompact :global(.ant-select-selection-search-input) {
+  height: 30px !important;
+}
+
+.fieldCompact :global(.ant-input-number-input) {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 !important;
+}
+
+.priceRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.aiButton {
+  border: none;
+  color: #fa8c16;
+  background: #fff7e8;
+  border-radius: 10px;
+  height: 32px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.aiButton:global(.ant-btn-variant-solid),
+.aiButton:global(.ant-btn-color-default) {
+  background: #fff7e8;
+}
+
+.aiButton:hover,
+.aiButton:focus,
+.aiButton:active {
+  color: #fa8c16 !important;
+  background: #ffeacc !important;
+}
+
+.descriptionField {
+  width: min(100%, 1200px);
+  margin-bottom: 12px;
+}
+
+.descriptionField :global(.ant-form-item-label > label) {
+  font-size: 26px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.descriptionField :global(.ant-input) {
+  height: 32px;
+  min-height: 32px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.aiPopoverContent {
+  max-width: 420px;
+}
+
+.aiParagraph {
+  margin: 8px 0;
+  white-space: pre-wrap;
+}
+
+.aiParagraphMuted {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.aiErrorTitle {
+  color: #cf1322;
+  font-weight: 600;
+}
+
+.footerActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+  .card :global(.ant-card-head-title) {
+    font-size: 34px;
+  }
+
+  .sectionTitle,
+  .fieldCompact :global(.ant-form-item-label > label),
+  .descriptionField :global(.ant-form-item-label > label) {
+    font-size: 22px !important;
+  }
+
+  .fieldCompact,
+  .descriptionField {
+    width: 100%;
+  }
+}
