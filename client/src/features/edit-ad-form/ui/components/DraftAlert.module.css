@@ -1,0 +1,28 @@
+.draftAlert {
+  margin-bottom: 16px;
+}
+
+.draftAlert:global(.ant-alert) {
+  background: var(--color-bg-warning);
+  border-color: var(--color-warning-accent);
+  --ant-color-text-heading: var(--color-text-title);
+}
+
+.draftAlert :global(.ant-alert-message),
+.draftAlert :global(.ant-alert-description) {
+  color: var(--color-text-secondary);
+}
+
+.draftAlert :global(.ant-alert-message) {
+  color: var(--color-text-title) !important;
+  font-weight: 600;
+}
+
+.draftAlert :global(.ant-alert-icon) {
+  color: var(--color-warning-strong) !important;
+}
+
+.draftAlert :global(.ant-alert-action) {
+  display: flex;
+  gap: 8px;
+}

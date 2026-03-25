@@ -1,13 +1,8 @@
 import { BulbOutlined, DollarOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
-  Alert,
-  Button,
   Card,
   Form,
-  Input,
-  InputNumber,
   Popover,
-  Select,
   Space,
   Typography,
   message,
@@ -28,7 +23,11 @@ import { useEditedAdsStore } from '@/features/edit-ad-form/lib/useEditedAdsStore
 import { useUnsavedChangesPrompt } from '@/shared/hooks/useUnsavedChangesPrompt';
 import { env } from '@/shared/config/env';
 
+import { UiButton, UiInput, UiInputNumber, UiSelect, UiTextArea } from '@/shared/ui/controls';
+import { aiPopoverClassName, selectPopupClassName } from '@/shared/ui/overlays';
+
 import styles from './EditAdForm.module.css';
+import { DraftAlert } from './components/DraftAlert';
 
 type Props = {
   ad: Ad;
@@ -273,25 +272,7 @@ export const EditAdForm = ({ ad }: Props) => {
   return (
     <Card className={styles.card} title={'Редактирование объявления'}>
       {showDraftAlert ? (
-        <Alert
-          className={styles.draftAlert}
-          type="warning"
-          showIcon
-          message={'Найден черновик'}
-          description={
-            'Можно восстановить локально сохранённые изменения или сбросить их.'
-          }
-          action={
-            <Space wrap>
-              <Button className={styles.secondaryButton} size="small" onClick={handleRestoreDraft}>
-                {'Восстановить'}
-              </Button>
-              <Button className={styles.secondaryButton} size="small" onClick={handleDiscardDraft}>
-                {'Сбросить'}
-              </Button>
-            </Space>
-          }
-        />
+        <DraftAlert onRestore={handleRestoreDraft} onDiscard={handleDiscardDraft} />
       ) : null}
 
       <Form<EditAdFormValues> form={form} layout="vertical" onFinish={handleSubmit} requiredMark>
@@ -301,7 +282,7 @@ export const EditAdForm = ({ ad }: Props) => {
             label={'Категория'}
             name="category"
             rules={[{ required: true, message: 'Выберите категорию' }]}>
-            <Select popupClassName={styles.selectPopup} options={categoryOptions} />
+            <UiSelect compact popupClassName={selectPopupClassName} options={categoryOptions} />
           </Form.Item>
         </section>
 
@@ -320,7 +301,7 @@ export const EditAdForm = ({ ad }: Props) => {
                 message: 'Название должно быть заполнено',
               },
             ]}>
-            <Input allowClear placeholder={'Например, MacBook Pro 16"'} />
+            <UiInput compact allowClear placeholder={'Например, MacBook Pro 16"'} />
           </Form.Item>
 
           <div className={styles.priceRow}>
@@ -329,13 +310,14 @@ export const EditAdForm = ({ ad }: Props) => {
               label={'Цена'}
               name="price"
               rules={[{ required: true, message: 'Укажите цену' }]}>
-              <InputNumber min={0} precision={0} style={{ width: '100%' }} />
+              <UiInputNumber compact min={0} precision={0} style={{ width: '100%' }} />
             </Form.Item>
 
             <Popover
               trigger="click"
               open={priceAi.open}
               placement="topLeft"
+              overlayClassName={aiPopoverClassName}
               onOpenChange={(open) => setPriceAi((state) => ({ ...state, open }))}
               content={
                 priceAi.status === 'success' && priceAi.data ? (
@@ -349,7 +331,7 @@ export const EditAdForm = ({ ad }: Props) => {
                       {priceAi.data.rationale}
                     </Typography.Paragraph>
                     <Space size={8}>
-                      <Button
+                      <UiButton
                         type="primary"
                         size="small"
                         onClick={() => {
@@ -357,13 +339,13 @@ export const EditAdForm = ({ ad }: Props) => {
                           setPriceAi((state) => ({ ...state, open: false }));
                         }}>
                         {'Применить'}
-                      </Button>
-                      <Button
-                        className={styles.secondaryButton}
+                      </UiButton>
+                      <UiButton
+                        tone="secondary"
                         size="small"
                         onClick={() => setPriceAi((state) => ({ ...state, open: false }))}>
                         {'Закрыть'}
-                      </Button>
+                      </UiButton>
                     </Space>
                   </div>
                 ) : (
@@ -375,24 +357,24 @@ export const EditAdForm = ({ ad }: Props) => {
                       {priceAi.error ??
                         'Попробуйте повторить запрос или закрыть уведомление.'}
                     </Typography.Paragraph>
-                    <Button
-                      className={styles.secondaryButton}
+                    <UiButton
+                      tone="secondary"
                       size="small"
                       onClick={() => setPriceAi((state) => ({ ...state, open: false }))}>
                       {'Закрыть'}
-                    </Button>
+                    </UiButton>
                   </div>
                 )
               }>
-              <Button
-                className={styles.aiButton}
+              <UiButton
+                tone="ai"
                 icon={priceAi.status === 'loading' ? <ReloadOutlined spin /> : <DollarOutlined />}
                 loading={priceAi.status === 'loading'}
                 disabled={!isAiConfigured || priceAi.status === 'loading'}
                 title={!isAiConfigured ? aiDisabledHint : undefined}
                 onClick={handleEstimatePrice}>
                 {priceButtonLabel}
-              </Button>
+              </UiButton>
             </Popover>
           </div>
         </section>
@@ -409,11 +391,11 @@ export const EditAdForm = ({ ad }: Props) => {
               label={field.label}
               name={['params', field.name]}>
               {field.type === 'select' ? (
-                <Select popupClassName={styles.selectPopup} allowClear options={field.options} />
+                <UiSelect compact popupClassName={selectPopupClassName} allowClear options={field.options} />
               ) : field.type === 'number' ? (
-                <InputNumber min={field.min} style={{ width: '100%' }} />
+                <UiInputNumber compact min={field.min} style={{ width: '100%' }} />
               ) : (
-                <Input allowClear />
+                <UiInput compact allowClear />
               )}
             </Form.Item>
           ))}
@@ -424,7 +406,7 @@ export const EditAdForm = ({ ad }: Props) => {
             className={styles.descriptionField}
             label={'Описание'}
             name="description">
-            <Input.TextArea
+            <UiTextArea formStyle
               rows={4}
               maxLength={1000}
               showCount
@@ -438,6 +420,7 @@ export const EditAdForm = ({ ad }: Props) => {
             trigger="click"
             open={descriptionAi.open}
             placement="topLeft"
+            overlayClassName={aiPopoverClassName}
             onOpenChange={(open) => setDescriptionAi((state) => ({ ...state, open }))}
             content={
               descriptionAi.status === 'success' && descriptionAi.data ? (
@@ -452,7 +435,7 @@ export const EditAdForm = ({ ad }: Props) => {
                     </Typography.Paragraph>
                   ))}
                   <Space size={8}>
-                    <Button
+                    <UiButton
                       type="primary"
                       size="small"
                       onClick={() => {
@@ -463,13 +446,13 @@ export const EditAdForm = ({ ad }: Props) => {
                         setDescriptionAi((state) => ({ ...state, open: false }));
                       }}>
                       {'Применить'}
-                    </Button>
-                    <Button
-                      className={styles.secondaryButton}
+                    </UiButton>
+                    <UiButton
+                      tone="secondary"
                       size="small"
                       onClick={() => setDescriptionAi((state) => ({ ...state, open: false }))}>
                       {'Закрыть'}
-                    </Button>
+                    </UiButton>
                   </Space>
                 </div>
               ) : (
@@ -481,36 +464,36 @@ export const EditAdForm = ({ ad }: Props) => {
                     {descriptionAi.error ??
                       'Попробуйте повторить запрос или закрыть уведомление.'}
                   </Typography.Paragraph>
-                  <Button
-                    className={styles.secondaryButton}
+                  <UiButton
+                    tone="secondary"
                     size="small"
                     onClick={() => setDescriptionAi((state) => ({ ...state, open: false }))}>
                     {'Закрыть'}
-                  </Button>
+                  </UiButton>
                 </div>
               )
             }>
-            <Button
-              className={styles.aiButton}
+            <UiButton
+              tone="ai"
               icon={descriptionAi.status === 'loading' ? <ReloadOutlined spin /> : <BulbOutlined />}
               loading={descriptionAi.status === 'loading'}
               disabled={!isAiConfigured || descriptionAi.status === 'loading'}
               title={!isAiConfigured ? aiDisabledHint : undefined}
               onClick={handleGenerateDescription}>
               {descriptionButtonLabel}
-            </Button>
+            </UiButton>
           </Popover>
         </section>
 
         <div className={styles.footerActions}>
-          <Button
+          <UiButton
             type="primary"
             htmlType="submit"
             loading={submitting}
             disabled={!canSubmit || submitting}>
             {'Сохранить'}
-          </Button>
-          <Button onClick={handleCancel}>{'Отменить'}</Button>
+          </UiButton>
+          <UiButton tone="secondary" onClick={handleCancel}>{'Отменить'}</UiButton>
         </div>
       </Form>
     </Card>

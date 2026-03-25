@@ -1,0 +1,174 @@
+.secondaryButton:global(.ant-btn) {
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border-strong) !important;
+  background: var(--color-bg-surface) !important;
+}
+
+.secondaryButton:global(.ant-btn):hover,
+.secondaryButton:global(.ant-btn):focus,
+.secondaryButton:global(.ant-btn):active {
+  color: var(--color-text-title) !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-bg-soft) !important;
+}
+
+.aiButton:global(.ant-btn) {
+  border: none;
+  color: var(--color-warning-strong) !important;
+  background: var(--color-bg-warning-soft) !important;
+  border-radius: 10px;
+  height: 32px;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.aiButton:global(.ant-btn.ant-btn-variant-solid),
+.aiButton:global(.ant-btn.ant-btn-color-default) {
+  background: var(--color-bg-warning-soft) !important;
+}
+
+.aiButton:global(.ant-btn):hover,
+.aiButton:global(.ant-btn):focus,
+.aiButton:global(.ant-btn):active {
+  color: var(--color-warning-strong) !important;
+  background: var(--color-bg-warning-hover) !important;
+}
+
+.aiButton:global(.ant-btn):disabled,
+.aiButton:global(.ant-btn.ant-btn-loading) {
+  color: var(--color-warning-strong) !important;
+  opacity: 1;
+  background: var(--color-bg-warning-soft) !important;
+}
+
+.aiButton :global(.ant-btn-loading-icon) {
+  color: var(--color-warning-strong) !important;
+}
+
+.compactInput:global(.ant-input),
+.compactInput:global(.ant-input-affix-wrapper),
+.compactInputNumber:global(.ant-input-number),
+.compactSelect:global(.ant-select) :global(.ant-select-selector) {
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  background: var(--color-bg-surface) !important;
+  border-color: var(--color-border-strong) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.compactInput:global(.ant-input),
+.compactInput :global(.ant-input),
+.compactInputNumber :global(.ant-input-number-input),
+.compactSelect:global(.ant-select) :global(.ant-select-selection-item),
+.compactSelect:global(.ant-select.ant-select-open) :global(.ant-select-selection-item),
+.compactSelect:global(.ant-select.ant-select-focused) :global(.ant-select-selection-item),
+.compactSelect:global(.ant-select) :global(.ant-select-selection-search-input),
+.compactSelect:global(.ant-select.ant-select-open) :global(.ant-select-selection-search-input),
+.compactSelect:global(.ant-select.ant-select-focused) :global(.ant-select-selection-search-input) {
+  color: var(--color-text-primary) !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+}
+
+.compactInput:global(.ant-input)::placeholder,
+.compactInput :global(.ant-input)::placeholder,
+.compactInputNumber :global(.ant-input-number-input)::placeholder,
+.compactSelect:global(.ant-select) :global(.ant-select-selection-placeholder) {
+  color: var(--color-text-muted) !important;
+}
+
+.compactSelect:global(.ant-select) :global(.ant-select-arrow),
+.compactInput :global(.ant-input-clear-icon),
+.compactInput:global(.ant-input-affix-wrapper) :global(.ant-input-clear-icon) {
+  color: var(--color-text-subtle) !important;
+}
+
+.compactInput:global(.ant-input-affix-wrapper) {
+  padding: 0 11px !important;
+}
+
+.compactInput:global(.ant-input-affix-wrapper) > :global(input.ant-input) {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 !important;
+}
+
+.compactInputNumber :global(.ant-input-number-input-wrap) {
+  height: 30px !important;
+}
+
+.compactInputNumber :global(.ant-input-number-handler-wrap) {
+  background: var(--color-bg-soft);
+  border-inline-start: 1px solid var(--color-border-default);
+}
+
+.compactInputNumber :global(.ant-input-number-handler) {
+  border-color: var(--color-border-default);
+}
+
+.compactSelect:global(.ant-select) :global(.ant-select-selector) {
+  padding: 0 11px !important;
+}
+
+.compactSelect:global(.ant-select) :global(.ant-select-selection-item),
+.compactSelect:global(.ant-select) :global(.ant-select-selection-placeholder) {
+  line-height: 30px !important;
+}
+
+.compactSelect:global(.ant-select) :global(.ant-select-selection-search-input),
+.compactInputNumber :global(.ant-input-number-input) {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 !important;
+}
+
+.compactInput:global(.ant-input):hover,
+.compactInput:global(.ant-input-affix-wrapper):hover,
+.compactInputNumber:global(.ant-input-number):hover,
+.compactSelect:global(.ant-select):hover :global(.ant-select-selector) {
+  border-color: var(--color-primary) !important;
+}
+
+.compactInput:global(.ant-input):focus,
+.compactInput:global(.ant-input-focused),
+.compactInput:global(.ant-input-affix-wrapper-focused),
+.compactInputNumber:global(.ant-input-number-focused),
+.compactSelect:global(.ant-select.ant-select-focused) :global(.ant-select-selector),
+.compactSelect:global(.ant-select.ant-select-open) :global(.ant-select-selector) {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
+}
+
+.formTextArea:global(.ant-input),
+.formTextArea:global(textarea.ant-input) {
+  border-radius: 8px;
+  font-size: 16px;
+  background: var(--color-bg-surface) !important;
+  border-color: var(--color-border-strong) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.formTextArea:global(.ant-input)::placeholder,
+.formTextArea:global(textarea.ant-input)::placeholder {
+  color: var(--color-text-muted) !important;
+}
+
+.formTextArea:global(.ant-input):hover,
+.formTextArea:global(.ant-input):focus,
+.formTextArea:global(textarea.ant-input):hover,
+.formTextArea:global(textarea.ant-input):focus {
+  border-color: var(--color-primary) !important;
+}
+
+.formTextArea :global(.ant-input-show-count-suffix),
+.formTextArea :global(.ant-input-data-count),
+.formTextArea :global(.ant-input-data-count > span),
+.formTextArea :global(.ant-input-textarea-show-count::after) {
+  color: var(--color-text-muted) !important;
+}
