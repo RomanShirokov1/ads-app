@@ -60,6 +60,8 @@ const initialAiState = <T,>(): AiRequestState<T> => ({
   error: null,
 });
 
+const DRAFT_AUTOSAVE_DEBOUNCE_MS = 400;
+
 export const EditAdForm = ({ ad }: Props) => {
   const [form] = Form.useForm<EditAdFormValues>();
   const navigate = useNavigate();
@@ -85,7 +87,7 @@ export const EditAdForm = ({ ad }: Props) => {
   const hasDescription = Boolean(descriptionValue?.trim());
   const canSubmit = Boolean(titleValue?.trim()) && priceValue !== null && priceValue !== undefined;
   const isAiConfigured = Boolean(env.ollamaUrl.trim());
-  const aiDisabledHint = 'Укажите VITE_OLLAMA_URL в .env';
+  const aiDisabledHint = 'Р В Р в‚¬Р В РЎвЂќР В Р’В°Р В Р’В¶Р В РЎвЂР РЋРІР‚С™Р В Р’Вµ VITE_OLLAMA_URL Р В Р вЂ  .env';
 
   useUnsavedChangesPrompt(isDirty);
 
@@ -121,12 +123,16 @@ export const EditAdForm = ({ ad }: Props) => {
 
     setIsDirty(nextIsDirty);
 
-    if (nextIsDirty) {
-      draftStorage.set(ad.id, normalizedValues);
-      return;
-    }
+    const timeoutId = window.setTimeout(() => {
+      if (nextIsDirty) {
+        draftStorage.set(ad.id, normalizedValues);
+        return;
+      }
 
-    draftStorage.clear(ad.id);
+      draftStorage.clear(ad.id);
+    }, DRAFT_AUTOSAVE_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
   }, [ad.category, ad.id, allValues, initialValues]);
 
   const handleRestoreDraft = () => {
@@ -136,7 +142,7 @@ export const EditAdForm = ({ ad }: Props) => {
 
     form.setFieldsValue(initialDraftSnapshot);
     setShowDraftAlert(false);
-    message.success('Черновик восстановлен');
+    message.success('Р В Р’В§Р В Р’ВµР РЋР вЂљР В Р вЂ¦Р В РЎвЂўР В Р вЂ Р В РЎвЂР В РЎвЂќ Р В Р вЂ Р В РЎвЂўР РЋР С“Р РЋР С“Р РЋРІР‚С™Р В Р’В°Р В Р вЂ¦Р В РЎвЂўР В Р вЂ Р В Р’В»Р В Р’ВµР В Р вЂ¦');
   };
 
   const handleDiscardDraft = () => {
@@ -144,14 +150,14 @@ export const EditAdForm = ({ ad }: Props) => {
 
     form.setFieldsValue(initialValues);
     setShowDraftAlert(false);
-    message.info('Черновик удалён');
+    message.info('Р В Р’В§Р В Р’ВµР РЋР вЂљР В Р вЂ¦Р В РЎвЂўР В Р вЂ Р В РЎвЂР В РЎвЂќ Р РЋРЎвЂњР В РўвЂР В Р’В°Р В Р’В»Р РЋРІР‚ВР В Р вЂ¦');
   };
 
   const handleCancel = () => {
     if (
       isDirty &&
       !window.confirm(
-        'Есть несохранённые изменения. Выйти без сохранения?',
+        'Р В РІР‚СћР РЋР С“Р РЋРІР‚С™Р РЋР Р‰ Р В Р вЂ¦Р В Р’ВµР РЋР С“Р В РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР В Р’В°Р В Р вЂ¦Р РЋРІР‚ВР В Р вЂ¦Р В Р вЂ¦Р РЋРІР‚в„–Р В Р’Вµ Р В РЎвЂР В Р’В·Р В РЎВР В Р’ВµР В Р вЂ¦Р В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋР РЏ. Р В РІР‚в„ўР РЋРІР‚в„–Р В РІвЂћвЂ“Р РЋРІР‚С™Р В РЎвЂ Р В Р’В±Р В Р’ВµР В Р’В· Р РЋР С“Р В РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР В Р’В°Р В Р вЂ¦Р В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋР РЏ?',
       )
     ) {
       return;
@@ -195,7 +201,7 @@ export const EditAdForm = ({ ad }: Props) => {
         error:
           error instanceof Error
             ? error.message
-            : 'Произошла ошибка при запросе к AI',
+            : 'Р В РЎСџР РЋР вЂљР В РЎвЂўР В РЎвЂР В Р’В·Р В РЎвЂўР РЋРІвЂљВ¬Р В Р’В»Р В Р’В° Р В РЎвЂўР РЋРІвЂљВ¬Р В РЎвЂР В Р’В±Р В РЎвЂќР В Р’В° Р В РЎвЂ”Р РЋР вЂљР В РЎвЂ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“Р В Р’Вµ Р В РЎвЂќ AI',
       });
     }
   };
@@ -226,7 +232,7 @@ export const EditAdForm = ({ ad }: Props) => {
         error:
           error instanceof Error
             ? error.message
-            : 'Произошла ошибка при запросе к AI',
+            : 'Р В РЎСџР РЋР вЂљР В РЎвЂўР В РЎвЂР В Р’В·Р В РЎвЂўР РЋРІвЂљВ¬Р В Р’В»Р В Р’В° Р В РЎвЂўР РЋРІвЂљВ¬Р В РЎвЂР В Р’В±Р В РЎвЂќР В Р’В° Р В РЎвЂ”Р РЋР вЂљР В РЎвЂ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“Р В Р’Вµ Р В РЎвЂќ AI',
       });
     }
   };
@@ -240,13 +246,13 @@ export const EditAdForm = ({ ad }: Props) => {
       setIsDirty(false);
       setShowDraftAlert(false);
       markAdAsEdited(ad.id);
-      message.success('Изменения сохранены');
+      message.success('Р В Р’ВР В Р’В·Р В РЎВР В Р’ВµР В Р вЂ¦Р В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋР РЏ Р РЋР С“Р В РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР В Р’В°Р В Р вЂ¦Р В Р’ВµР В Р вЂ¦Р РЋРІР‚в„–');
       navigate(`/ads/${ad.id}`);
     } catch (error) {
       message.error(
         error instanceof Error
           ? error.message
-          : 'Не удалось сохранить объявление',
+          : 'Р В РЎСљР В Р’Вµ Р РЋРЎвЂњР В РўвЂР В Р’В°Р В Р’В»Р В РЎвЂўР РЋР С“Р РЋР Р‰ Р РЋР С“Р В РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР В Р’В°Р В Р вЂ¦Р В РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р В РЎвЂўР В Р’В±Р РЋР вЂ°Р РЋР РЏР В Р вЂ Р В Р’В»Р В Р’ВµР В Р вЂ¦Р В РЎвЂР В Р’Вµ',
       );
     } finally {
       setSubmitting(false);
@@ -255,22 +261,22 @@ export const EditAdForm = ({ ad }: Props) => {
 
   const priceButtonLabel =
     priceAi.status === 'loading'
-      ? 'Выполняется запрос'
+      ? 'Р В РІР‚в„ўР РЋРІР‚в„–Р В РЎвЂ”Р В РЎвЂўР В Р’В»Р В Р вЂ¦Р РЋР РЏР В Р’ВµР РЋРІР‚С™Р РЋР С“Р РЋР РЏ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“'
       : priceAi.status === 'idle'
-        ? 'Узнать рыночную цену'
-        : 'Повторить запрос';
+        ? 'Р В Р в‚¬Р В Р’В·Р В Р вЂ¦Р В Р’В°Р РЋРІР‚С™Р РЋР Р‰ Р РЋР вЂљР РЋРІР‚в„–Р В Р вЂ¦Р В РЎвЂўР РЋРІР‚РЋР В Р вЂ¦Р РЋРЎвЂњР РЋР вЂ№ Р РЋРІР‚В Р В Р’ВµР В Р вЂ¦Р РЋРЎвЂњ'
+        : 'Р В РЎСџР В РЎвЂўР В Р вЂ Р РЋРІР‚С™Р В РЎвЂўР РЋР вЂљР В РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“';
 
   const descriptionButtonLabel =
     descriptionAi.status === 'loading'
-      ? 'Выполняется запрос'
+      ? 'Р В РІР‚в„ўР РЋРІР‚в„–Р В РЎвЂ”Р В РЎвЂўР В Р’В»Р В Р вЂ¦Р РЋР РЏР В Р’ВµР РЋРІР‚С™Р РЋР С“Р РЋР РЏ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“'
       : descriptionAi.status === 'idle'
         ? hasDescription
-          ? 'Улучшить описание'
-          : 'Придумать описание'
-        : 'Повторить запрос';
+          ? 'Р В Р в‚¬Р В Р’В»Р РЋРЎвЂњР РЋРІР‚РЋР РЋРІвЂљВ¬Р В РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р В РЎвЂўР В РЎвЂ”Р В РЎвЂР РЋР С“Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ'
+          : 'Р В РЎСџР РЋР вЂљР В РЎвЂР В РўвЂР РЋРЎвЂњР В РЎВР В Р’В°Р РЋРІР‚С™Р РЋР Р‰ Р В РЎвЂўР В РЎвЂ”Р В РЎвЂР РЋР С“Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ'
+        : 'Р В РЎСџР В РЎвЂўР В Р вЂ Р РЋРІР‚С™Р В РЎвЂўР РЋР вЂљР В РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“';
 
   return (
-    <Card className={styles.card} title={'Редактирование объявления'}>
+    <Card className={styles.card} title={'Р В Р’В Р В Р’ВµР В РўвЂР В Р’В°Р В РЎвЂќР РЋРІР‚С™Р В РЎвЂР РЋР вЂљР В РЎвЂўР В Р вЂ Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ Р В РЎвЂўР В Р’В±Р РЋР вЂ°Р РЋР РЏР В Р вЂ Р В Р’В»Р В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋР РЏ'}>
       {showDraftAlert ? (
         <DraftAlert onRestore={handleRestoreDraft} onDiscard={handleDiscardDraft} />
       ) : null}
@@ -279,9 +285,9 @@ export const EditAdForm = ({ ad }: Props) => {
         <section className={styles.section}>
           <Form.Item
             className={styles.fieldCompact}
-            label={'Категория'}
+            label={'Р В РЎв„ўР В Р’В°Р РЋРІР‚С™Р В Р’ВµР В РЎвЂ“Р В РЎвЂўР РЋР вЂљР В РЎвЂР РЋР РЏ'}
             name="category"
-            rules={[{ required: true, message: 'Выберите категорию' }]}>
+            rules={[{ required: true, message: 'Р В РІР‚в„ўР РЋРІР‚в„–Р В Р’В±Р В Р’ВµР РЋР вЂљР В РЎвЂР РЋРІР‚С™Р В Р’Вµ Р В РЎвЂќР В Р’В°Р РЋРІР‚С™Р В Р’ВµР В РЎвЂ“Р В РЎвЂўР РЋР вЂљР В РЎвЂР РЋР вЂ№' }]}>
             <UiSelect compact popupClassName={selectPopupClassName} options={categoryOptions} />
           </Form.Item>
         </section>
@@ -289,27 +295,27 @@ export const EditAdForm = ({ ad }: Props) => {
         <section className={styles.section}>
           <Form.Item
             className={styles.fieldCompact}
-            label={'Название'}
+            label={'Р В РЎСљР В Р’В°Р В Р’В·Р В Р вЂ Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ'}
             name="title"
             rules={[
               {
                 required: true,
-                message: 'Название должно быть заполнено',
+                message: 'Р В РЎСљР В Р’В°Р В Р’В·Р В Р вЂ Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ Р В РўвЂР В РЎвЂўР В Р’В»Р В Р’В¶Р В Р вЂ¦Р В РЎвЂў Р В Р’В±Р РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р В РЎвЂўР В Р’В»Р В Р вЂ¦Р В Р’ВµР В Р вЂ¦Р В РЎвЂў',
               },
               {
                 whitespace: true,
-                message: 'Название должно быть заполнено',
+                message: 'Р В РЎСљР В Р’В°Р В Р’В·Р В Р вЂ Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ Р В РўвЂР В РЎвЂўР В Р’В»Р В Р’В¶Р В Р вЂ¦Р В РЎвЂў Р В Р’В±Р РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р В РЎвЂўР В Р’В»Р В Р вЂ¦Р В Р’ВµР В Р вЂ¦Р В РЎвЂў',
               },
             ]}>
-            <UiInput compact allowClear placeholder={'Например, MacBook Pro 16"'} />
+            <UiInput compact allowClear placeholder={'Р В РЎСљР В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂР В РЎВР В Р’ВµР РЋР вЂљ, MacBook Pro 16"'} />
           </Form.Item>
 
           <div className={styles.priceRow}>
             <Form.Item
               className={styles.fieldCompact}
-              label={'Цена'}
+              label={'Р В Р’В¦Р В Р’ВµР В Р вЂ¦Р В Р’В°'}
               name="price"
-              rules={[{ required: true, message: 'Укажите цену' }]}>
+              rules={[{ required: true, message: 'Р В Р в‚¬Р В РЎвЂќР В Р’В°Р В Р’В¶Р В РЎвЂР РЋРІР‚С™Р В Р’Вµ Р РЋРІР‚В Р В Р’ВµР В Р вЂ¦Р РЋРЎвЂњ' }]}>
               <UiInputNumber compact min={0} precision={0} style={{ width: '100%' }} />
             </Form.Item>
 
@@ -322,10 +328,10 @@ export const EditAdForm = ({ ad }: Props) => {
               content={
                 priceAi.status === 'success' && priceAi.data ? (
                   <div className={styles.aiPopoverContent}>
-                    <Typography.Text strong>{'Ответ AI:'}</Typography.Text>
+                    <Typography.Text strong>{'Р В РЎвЂєР РЋРІР‚С™Р В Р вЂ Р В Р’ВµР РЋРІР‚С™ AI:'}</Typography.Text>
                     <Typography.Paragraph className={styles.aiParagraph}>
-                      {'Рекомендованная цена:'}{' '}
-                      {new Intl.NumberFormat('ru-RU').format(priceAi.data.price)} {'₽'}
+                      {'Р В Р’В Р В Р’ВµР В РЎвЂќР В РЎвЂўР В РЎВР В Р’ВµР В Р вЂ¦Р В РўвЂР В РЎвЂўР В Р вЂ Р В Р’В°Р В Р вЂ¦Р В Р вЂ¦Р В Р’В°Р РЋР РЏ Р РЋРІР‚В Р В Р’ВµР В Р вЂ¦Р В Р’В°:'}{' '}
+                      {new Intl.NumberFormat('ru-RU').format(priceAi.data.price)} {'Р Р†РІР‚С™Р вЂ¦'}
                     </Typography.Paragraph>
                     <Typography.Paragraph className={styles.aiParagraph}>
                       {priceAi.data.rationale}
@@ -338,30 +344,30 @@ export const EditAdForm = ({ ad }: Props) => {
                           form.setFieldValue('price', priceAi.data?.price);
                           setPriceAi((state) => ({ ...state, open: false }));
                         }}>
-                        {'Применить'}
+                        {'Р В РЎСџР РЋР вЂљР В РЎвЂР В РЎВР В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋРІР‚С™Р РЋР Р‰'}
                       </UiButton>
                       <UiButton
                         tone="secondary"
                         size="small"
                         onClick={() => setPriceAi((state) => ({ ...state, open: false }))}>
-                        {'Закрыть'}
+                        {'Р В РІР‚вЂќР В Р’В°Р В РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰'}
                       </UiButton>
                     </Space>
                   </div>
                 ) : (
                   <div className={styles.aiPopoverContent}>
                     <Typography.Text className={styles.aiErrorTitle}>
-                      {'Произошла ошибка при запросе к AI'}
+                      {'Р В РЎСџР РЋР вЂљР В РЎвЂўР В РЎвЂР В Р’В·Р В РЎвЂўР РЋРІвЂљВ¬Р В Р’В»Р В Р’В° Р В РЎвЂўР РЋРІвЂљВ¬Р В РЎвЂР В Р’В±Р В РЎвЂќР В Р’В° Р В РЎвЂ”Р РЋР вЂљР В РЎвЂ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“Р В Р’Вµ Р В РЎвЂќ AI'}
                     </Typography.Text>
                     <Typography.Paragraph className={styles.aiParagraph}>
                       {priceAi.error ??
-                        'Попробуйте повторить запрос или закрыть уведомление.'}
+                        'Р В РЎСџР В РЎвЂўР В РЎвЂ”Р РЋР вЂљР В РЎвЂўР В Р’В±Р РЋРЎвЂњР В РІвЂћвЂ“Р РЋРІР‚С™Р В Р’Вµ Р В РЎвЂ”Р В РЎвЂўР В Р вЂ Р РЋРІР‚С™Р В РЎвЂўР РЋР вЂљР В РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“ Р В РЎвЂР В Р’В»Р В РЎвЂ Р В Р’В·Р В Р’В°Р В РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰ Р РЋРЎвЂњР В Р вЂ Р В Р’ВµР В РўвЂР В РЎвЂўР В РЎВР В Р’В»Р В Р’ВµР В Р вЂ¦Р В РЎвЂР В Р’Вµ.'}
                     </Typography.Paragraph>
                     <UiButton
                       tone="secondary"
                       size="small"
                       onClick={() => setPriceAi((state) => ({ ...state, open: false }))}>
-                      {'Закрыть'}
+                      {'Р В РІР‚вЂќР В Р’В°Р В РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰'}
                     </UiButton>
                   </div>
                 )
@@ -381,7 +387,7 @@ export const EditAdForm = ({ ad }: Props) => {
 
         <section className={styles.section}>
           <Typography.Title className={styles.sectionTitle} level={5}>
-            {'Характеристики'}
+            {'Р В РўС’Р В Р’В°Р РЋР вЂљР В Р’В°Р В РЎвЂќР РЋРІР‚С™Р В Р’ВµР РЋР вЂљР В РЎвЂР РЋР С“Р РЋРІР‚С™Р В РЎвЂР В РЎвЂќР В РЎвЂ'}
           </Typography.Title>
 
           {paramFieldConfig[category].map((field) => (
@@ -404,14 +410,14 @@ export const EditAdForm = ({ ad }: Props) => {
         <section className={styles.section}>
           <Form.Item
             className={styles.descriptionField}
-            label={'Описание'}
+            label={'Р В РЎвЂєР В РЎвЂ”Р В РЎвЂР РЋР С“Р В Р’В°Р В Р вЂ¦Р В РЎвЂР В Р’Вµ'}
             name="description">
             <UiTextArea formStyle
               rows={4}
               maxLength={1000}
               showCount
               placeholder={
-                'Расскажите о товаре, состоянии и условиях сделки'
+                'Р В Р’В Р В Р’В°Р РЋР С“Р РЋР С“Р В РЎвЂќР В Р’В°Р В Р’В¶Р В РЎвЂР РЋРІР‚С™Р В Р’Вµ Р В РЎвЂў Р РЋРІР‚С™Р В РЎвЂўР В Р вЂ Р В Р’В°Р РЋР вЂљР В Р’Вµ, Р РЋР С“Р В РЎвЂўР РЋР С“Р РЋРІР‚С™Р В РЎвЂўР РЋР РЏР В Р вЂ¦Р В РЎвЂР В РЎвЂ Р В РЎвЂ Р РЋРЎвЂњР РЋР С“Р В Р’В»Р В РЎвЂўР В Р вЂ Р В РЎвЂР РЋР РЏР РЋРІР‚В¦ Р РЋР С“Р В РўвЂР В Р’ВµР В Р’В»Р В РЎвЂќР В РЎвЂ'
               }
             />
           </Form.Item>
@@ -425,13 +431,13 @@ export const EditAdForm = ({ ad }: Props) => {
             content={
               descriptionAi.status === 'success' && descriptionAi.data ? (
                 <div className={styles.aiPopoverContent}>
-                  <Typography.Text strong>{'Ответ AI:'}</Typography.Text>
+                  <Typography.Text strong>{'Р В РЎвЂєР РЋРІР‚С™Р В Р вЂ Р В Р’ВµР РЋРІР‚С™ AI:'}</Typography.Text>
                   <Typography.Paragraph className={styles.aiParagraph}>
                     {descriptionAi.data.description}
                   </Typography.Paragraph>
                   {descriptionAi.data.suggestions.map((suggestion) => (
                     <Typography.Paragraph key={suggestion} className={styles.aiParagraphMuted}>
-                      {'•'} {suggestion}
+                      {'Р Р†Р вЂљРЎС›'} {suggestion}
                     </Typography.Paragraph>
                   ))}
                   <Space size={8}>
@@ -445,30 +451,30 @@ export const EditAdForm = ({ ad }: Props) => {
 
                         setDescriptionAi((state) => ({ ...state, open: false }));
                       }}>
-                      {'Применить'}
+                      {'Р В РЎСџР РЋР вЂљР В РЎвЂР В РЎВР В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋРІР‚С™Р РЋР Р‰'}
                     </UiButton>
                     <UiButton
                       tone="secondary"
                       size="small"
                       onClick={() => setDescriptionAi((state) => ({ ...state, open: false }))}>
-                      {'Закрыть'}
+                      {'Р В РІР‚вЂќР В Р’В°Р В РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰'}
                     </UiButton>
                   </Space>
                 </div>
               ) : (
                 <div className={styles.aiPopoverContent}>
                   <Typography.Text className={styles.aiErrorTitle}>
-                    {'Произошла ошибка при запросе к AI'}
+                    {'Р В РЎСџР РЋР вЂљР В РЎвЂўР В РЎвЂР В Р’В·Р В РЎвЂўР РЋРІвЂљВ¬Р В Р’В»Р В Р’В° Р В РЎвЂўР РЋРІвЂљВ¬Р В РЎвЂР В Р’В±Р В РЎвЂќР В Р’В° Р В РЎвЂ”Р РЋР вЂљР В РЎвЂ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“Р В Р’Вµ Р В РЎвЂќ AI'}
                   </Typography.Text>
                   <Typography.Paragraph className={styles.aiParagraph}>
                     {descriptionAi.error ??
-                      'Попробуйте повторить запрос или закрыть уведомление.'}
+                      'Р В РЎСџР В РЎвЂўР В РЎвЂ”Р РЋР вЂљР В РЎвЂўР В Р’В±Р РЋРЎвЂњР В РІвЂћвЂ“Р РЋРІР‚С™Р В Р’Вµ Р В РЎвЂ”Р В РЎвЂўР В Р вЂ Р РЋРІР‚С™Р В РЎвЂўР РЋР вЂљР В РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р В Р’В·Р В Р’В°Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР РЋР С“ Р В РЎвЂР В Р’В»Р В РЎвЂ Р В Р’В·Р В Р’В°Р В РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰ Р РЋРЎвЂњР В Р вЂ Р В Р’ВµР В РўвЂР В РЎвЂўР В РЎВР В Р’В»Р В Р’ВµР В Р вЂ¦Р В РЎвЂР В Р’Вµ.'}
                   </Typography.Paragraph>
                   <UiButton
                     tone="secondary"
                     size="small"
                     onClick={() => setDescriptionAi((state) => ({ ...state, open: false }))}>
-                    {'Закрыть'}
+                    {'Р В РІР‚вЂќР В Р’В°Р В РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р РЋР Р‰'}
                   </UiButton>
                 </div>
               )
@@ -491,9 +497,9 @@ export const EditAdForm = ({ ad }: Props) => {
             htmlType="submit"
             loading={submitting}
             disabled={!canSubmit || submitting}>
-            {'Сохранить'}
+            {'Р В Р Р‹Р В РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР В Р’В°Р В Р вЂ¦Р В РЎвЂР РЋРІР‚С™Р РЋР Р‰'}
           </UiButton>
-          <UiButton tone="secondary" onClick={handleCancel}>{'Отменить'}</UiButton>
+          <UiButton tone="secondary" onClick={handleCancel}>{'Р В РЎвЂєР РЋРІР‚С™Р В РЎВР В Р’ВµР В Р вЂ¦Р В РЎвЂР РЋРІР‚С™Р РЋР Р‰'}</UiButton>
         </div>
       </Form>
     </Card>

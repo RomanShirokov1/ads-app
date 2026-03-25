@@ -4,23 +4,39 @@ const getDraftKey = (adId: number) => `ad-edit-draft:${adId}`;
 
 export const draftStorage = {
   get(adId: number) {
-    const rawValue = window.localStorage.getItem(getDraftKey(adId));
-
-    if (!rawValue) {
-      return null;
-    }
-
     try {
+      const rawValue = window.localStorage.getItem(getDraftKey(adId));
+
+      if (!rawValue) {
+        return null;
+      }
+
       return JSON.parse(rawValue) as EditAdFormValues;
     } catch {
-      window.localStorage.removeItem(getDraftKey(adId));
+      try {
+        window.localStorage.removeItem(getDraftKey(adId));
+      } catch {
+        // ignore storage cleanup errors
+      }
+
       return null;
     }
   },
+
   set(adId: number, value: EditAdFormValues) {
-    window.localStorage.setItem(getDraftKey(adId), JSON.stringify(value));
+    try {
+      window.localStorage.setItem(getDraftKey(adId), JSON.stringify(value));
+      return true;
+    } catch {
+      return false;
+    }
   },
+
   clear(adId: number) {
-    window.localStorage.removeItem(getDraftKey(adId));
+    try {
+      window.localStorage.removeItem(getDraftKey(adId));
+    } catch {
+      // ignore storage cleanup errors
+    }
   },
 };

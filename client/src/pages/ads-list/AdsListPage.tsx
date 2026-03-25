@@ -1,4 +1,4 @@
-﻿import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { Alert, Card, Input, Pagination, Select, Spin } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
 import { useAdsFiltersStore } from '@/features/ad-filters/model/useAdsFiltersStore';
 import { AdsFiltersPanel } from '@/features/ad-filters/ui/AdsFiltersPanel';
 import { EmptyState, ErrorState, LoadingState } from '@/shared/ui/PageState';
+import { getRussianPluralForm } from '@/shared/lib/getRussianPluralForm';
 import styles from './AdsListPage.module.css';
 
 const areCategoriesEqual = (left: AdCategory[], right: AdCategory[]) => {
@@ -20,7 +21,10 @@ const areCategoriesEqual = (left: AdCategory[], right: AdCategory[]) => {
     return false;
   }
 
-  return [...left].sort().every((value, index) => value === [...right].sort()[index]);
+  const leftSorted = [...left].sort();
+  const rightSorted = [...right].sort();
+
+  return leftSorted.every((value, index) => value === rightSorted[index]);
 };
 
 export const AdsListPage = () => {
@@ -135,7 +139,7 @@ export const AdsListPage = () => {
 
   const adsCountLabel = useMemo(() => {
     const formattedTotal = new Intl.NumberFormat('ru-RU').format(total);
-    return `${formattedTotal} ${total === 1 ? 'объявление' : 'объявления'}`;
+    return `${formattedTotal} ${getRussianPluralForm(total, ['\u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u0435', '\u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f', '\u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u0439'])}`;
   }, [total]);
 
   const handleResetFilters = () => {
